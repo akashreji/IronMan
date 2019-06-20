@@ -1,0 +1,39 @@
+//==============================================================================
+// Welcome to scripting in Spark AR Studio! Helpful links:
+//
+// Scripting Basics - https://fb.me/spark-scripting-basics
+// Reactive Programming - https://fb.me/spark-reactive-programming
+// Scripting Object Reference - https://fb.me/spark-scripting-reference
+// Changelogs - https://fb.me/spark-changelog
+//==============================================================================
+
+// How to load in modules
+const Diagnostics = require('Diagnostics');
+const Scene = require('Scene');
+const TouchGestures = require('TouchGestures')
+const Reactive = require('Reactive');
+
+var planeTracker= Scene.root.find('planeTracker0');
+var shoe= Scene.root.find('ConverseSneakers');
+
+// How to access scene objects
+const directionalLight = Scene.root.find('directionalLight0');
+
+TouchGestures.onPinch().subscribe(function(ShoePinching)
+{
+	var lastScaleX = shoe.transform.scaleX.pinLastValue();
+	shoe.transform.scaleX = Reactive.mul(lastScaleX, ShoePinching.scale);
+
+	var lastScaleY = shoe.transform.scaleY.pinLastValue();
+	shoe.transform.scaleY = Reactive.mul(lastScaleY, ShoePinching.scale);
+
+	var lastScaleZ = shoe.transform.scaleZ.pinLastValue();
+	shoe.transform.scaleZ = Reactive.mul(lastScaleZ, ShoePinching.scale);
+});
+
+TouchGestures.onPan(shoe).subscribe(function(ShoePanning)
+{
+	planeTracker.trackPoint(ShoePanning.location,ShoePanning.state);
+});
+
+
